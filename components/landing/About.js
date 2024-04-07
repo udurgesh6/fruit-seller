@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const About = () => {
   return (
-    <div className="bg-[#FF8BB7] grid grid-cols-1 sm:grid-cols-4 text-[#770006] mt-14 p-10">
+    <div className="bg-[#ffe5f0] grid grid-cols-1 sm:grid-cols-4 text-[#770006] mt-14 p-10">
       <h2 className="font-semibold text-xl col-span-1 sm:col-span-4 flex items-center justify-center mb-6">
         About Us
       </h2>

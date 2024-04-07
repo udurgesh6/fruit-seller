@@ -8,7 +8,7 @@ import { Cart, HamBurger } from "@/constants/allSvgs";
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
-    <nav className={`bg-[#FF8BB7] border-y border-[#770006] relative lg:px-8`}>
+    <nav className={`bg-[#ffe5f0] border-b border-[#770006] relative lg:px-8`}>
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           href="/"
@@ -86,7 +86,7 @@ const Header = () => {
           id="navbar-user"
         >
           <ul
-            className={`flex flex-col font-medium p-4 md:p-0 mt-4 bg-[#FF8BB7] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 text-[#770006]`}
+            className={`flex flex-col font-medium p-4 md:p-0 mt-4 bg-[#ffe5f0] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 text-[#770006]`}
           >
             {NavLinks.map(({ link, name }) => (
               <li key={name}>
