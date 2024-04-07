@@ -1,7 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.image-gallery-slide .image-gallery-image {
-  object-fit: none;
-}

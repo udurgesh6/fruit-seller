@@ -23,13 +23,13 @@ const Header = () => {
           />
         </Link>
         <div className="flex items-center md:order-2 ">
-          <button
-            type="button"
+          <Link
             className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
             id="user-menu-button"
             aria-expanded="false"
             data-dropdown-toggle="user-dropdown"
             data-dropdown-placement="bottom"
+            href="/account"
           >
             <span className="sr-only">Open user menu</span>
             <Image
@@ -39,7 +39,7 @@ const Header = () => {
               width={50}
               height={50}
             />
-          </button>
+          </Link>
           <Link className="ml-4 mr-2 lg:ml-2" href="/cart">
             <Cart className={`text-[#770006]`} />
           </Link>
@@ -86,7 +86,7 @@ const Header = () => {
           id="navbar-user"
         >
           <ul
-            className={`flex flex-col font-medium p-4 md:p-0 mt-4 bg-[#ffe5f0] md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 text-[#770006]`}
+            className={`flex flex-col font-medium p-4 md:p-0 mt-4 bg-[#ffe5f0] md:space-x-12 rtl:space-x-reverse md:flex-row md:mt-0 text-[#770006]`}
           >
             {NavLinks.map(({ link, name }) => (
               <li key={name}>
