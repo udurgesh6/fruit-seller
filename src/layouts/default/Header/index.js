@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import { COLORS } from "@/constants/colors";
@@ -6,7 +7,16 @@ import { NavLinks } from "@/constants/navLinks";
 import { Cart, HamBurger } from "@/constants/allSvgs";
 
 const Header = () => {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const onAccountClick = () => {
+    const userLoggedIn = false;
+    if (userLoggedIn) {
+      router.push("/account");
+    } else {
+      router.push("/authentication");
+    }
+  };
   return (
     <nav className={`bg-[#ffe5f0] border-b border-[#770006] relative lg:px-8`}>
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -23,13 +33,13 @@ const Header = () => {
           />
         </Link>
         <div className="flex items-center md:order-2 ">
-          <Link
+          <button
             className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
             id="user-menu-button"
             aria-expanded="false"
             data-dropdown-toggle="user-dropdown"
             data-dropdown-placement="bottom"
-            href="/account"
+            onClick={onAccountClick}
           >
             <span className="sr-only">Open user menu</span>
             <Image
@@ -39,7 +49,7 @@ const Header = () => {
               width={50}
               height={50}
             />
-          </Link>
+          </button>
           <Link className="ml-4 mr-2 lg:ml-2" href="/cart">
             <Cart className={`text-[#770006]`} />
           </Link>
