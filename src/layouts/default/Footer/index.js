@@ -1,5 +1,6 @@
 import { Facebook, Instagram } from "@/constants/allSvgs";
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -16,26 +17,38 @@ const Footer = () => {
 
             <ul class="mt-2 space-y-1 text-sm">
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/privacy-policy"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/delivery-policy"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   Delivery Policy
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/terms-and-conditions"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/return-and-refund-policy"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   Return & Refund Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -44,19 +57,20 @@ const Footer = () => {
             <p class="font-medium text-[#770006]">ACCOUNT</p>
             <ul class="mt-2 space-y-1 text-sm">
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/account"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   My Account
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
-                  My Profile
-                </a>
-              </li>
-              <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/account/orders"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   My Orders
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -65,14 +79,20 @@ const Footer = () => {
             <p class="font-medium text-[#770006]">COMPANY</p>
             <ul class="mt-2 space-y-1 text-sm">
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/about-us"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" class="text-[#770006] transition hover:opacity-75">
+                <Link
+                  href="/contact-us"
+                  class="text-[#770006] transition hover:opacity-75"
+                >
                   Contact Us
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

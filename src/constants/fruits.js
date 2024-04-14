@@ -6,6 +6,8 @@ export const fruits = [
     name: "INDIAN ORANGE",
     unit: "PER 750 GRAMS",
     price: 750,
+    description:
+      "Eingeered wood flooring is basically a wooden plank consisting of real timber that has been carefully pressed into three or more layers. The layers are purposefully installed to run in entirely different directions, creating a more stable base than plain solid wood Read More",
   },
   {
     url: "/fruit.webp",
@@ -41,22 +43,16 @@ export const fruits = [
 
 export const fruitBanners = [
   {
-    original:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
-    thumbnail:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
+    original: "/about-banner.jpg",
+    thumbnail: "/about-banner.jpg",
   },
   {
-    original:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
-    thumbnail:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
+    original: "/about-banner.jpg",
+    thumbnail: "/about-banner.jpg",
   },
   {
-    original:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
-    thumbnail:
-      "https://thumbs.dreamstime.com/z/fruits-fruit-food-collection-background-banner-orange-apple-appl-apples-lemon-berries-cherries-101720302.jpg",
+    original: "/about-banner.jpg",
+    thumbnail: "/about-banner.jpg",
   },
 ];
 

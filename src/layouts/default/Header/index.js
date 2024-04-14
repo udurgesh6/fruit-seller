@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import { COLORS } from "@/constants/colors";
 import { NavLinks } from "@/constants/navLinks";
 import { Cart, HamBurger } from "@/constants/allSvgs";
+import LoginModal from "@/components/modal/LoginModal";
+import { CartContext } from "@/context/CartContext";
+import CartModal from "@/components/modal/CartModal";
+import { UserContext } from "@/context/UserContext";
 
 const Header = () => {
   const router = useRouter();
+
+  const { cartItems, cartModalOpen, setCartModalOpen } =
+    useContext(CartContext);
+  const {
+    state: { userInfo },
+  } = useContext(UserContext);
+
+  const [totalItems, setTotalItems] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
   const onAccountClick = () => {
     const userLoggedIn = false;
     if (userLoggedIn) {
@@ -17,11 +31,22 @@ const Header = () => {
       router.push("/authentication");
     }
   };
+
+  useEffect(() => {
+    setTotalItems(cartItems.length);
+  }, [cartItems]);
+
   return (
     <nav className={`bg-[#ffe5f0] border-b border-[#770006] relative lg:px-8`}>
+      {modalOpen && (
+        <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      )}
+      {cartModalOpen && (
+        <CartModal modalOpen={cartModalOpen} setModalOpen={setCartModalOpen} />
+      )}
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link
-          href="/"
+        <button
+          onClick={() => setModalOpen(!modalOpen)}
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <Image
@@ -31,7 +56,7 @@ const Header = () => {
             width={50}
             height={70}
           />
-        </Link>
+        </button>
         <div className="flex items-center md:order-2 ">
           <button
             className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
@@ -50,9 +75,16 @@ const Header = () => {
               height={50}
             />
           </button>
-          <Link className="ml-4 mr-2 lg:ml-2" href="/cart">
-            <Cart className={`text-[#770006]`} />
-          </Link>
+          <button
+            aria-label="Total"
+            className="relative px-3 text-white text-2xl font-bold ml-4 mr-2 lg:ml-2"
+            onClick={() => setCartModalOpen((cartModalOpen) => !cartModalOpen)}
+          >
+            <span className="absolute z-10 top-0 left-8 inline-flex items-center justify-center p-1 h-5 w-5 text-xs font-medium leading-none text-white transform -translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+              {totalItems}
+            </span>
+            <Cart className={`text-[#770006] drop-shadow-xl`} />
+          </button>
           <div
             className={`z-50 ${
               !mobileMenuOpen ? "hidden" : "block md:hidden"
