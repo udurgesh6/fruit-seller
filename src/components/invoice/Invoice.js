@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import Link from "next/link";
-import OrderTable from "@component/order/OrderTable";
+import OrderTable from "../order/OrderTable";
 import Image from "next/image";
 
 const Invoice = ({ data, printRef }) => {
