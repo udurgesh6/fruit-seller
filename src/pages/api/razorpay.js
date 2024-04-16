@@ -1,22 +1,21 @@
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 const Razorpay = require("razorpay");
 
 export default async function handler(req, res) {
+  const orderBody = JSON.parse(req.body);
   if (req.method === "POST") {
-    // Initialize razorpay object
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY,
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
-    // Create an order -> generate the OrderID -> Send it to the Front-end
     const payment_capture = 1;
-    const amount = 499;
+    const amount = orderBody.total;
     const currency = "INR";
     const options = {
       amount: (amount * 100).toString(),
       currency,
-      receipt: nanoid(),
+      receipt: orderBody._id,
       payment_capture,
     };
 
@@ -31,7 +30,5 @@ export default async function handler(req, res) {
       console.log(err);
       res.status(400).json(err);
     }
-  } else {
-    // Handle any other HTTP method
   }
 }

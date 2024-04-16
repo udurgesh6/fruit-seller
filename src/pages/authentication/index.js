@@ -1,15 +1,18 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { Google } from "@/constants/allSvgs";
+// import { Google } from "@/constants/allSvgs";
 import React, { useState } from "react";
+import useLoginSubmit from "@/hooks/useLoginSubmit";
+import InputArea from "@/components/form/InputArea";
+import Error from "@/components/form/Error";
+import { FiLock, FiMail, FiUser } from "react-icons/fi";
+import BasicLoading from "@/components/Loading/BasicLoading";
 
 const index = () => {
-  const [userDetail, setUserDetail] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [actionType, setActionType] = useState("signup");
+  const [actionType, setActionType] = useState("login");
+
+  const { handleSubmit, submitHandler, register, errors, loading } =
+    useLoginSubmit(actionType);
+
   const changeActionType = () => {
     if (actionType === "login") {
       setActionType("signup");
@@ -17,10 +20,14 @@ const index = () => {
       setActionType("login");
     }
   };
+
   return (
     <div className="pt-14 px-4 md:px-20 lg:px-48 text-[#770006]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
-        <div className="col-span-2 md:col-span-1 border-2 border-[#770006] p-5 rounded">
+        <form
+          onSubmit={handleSubmit(submitHandler)}
+          className="col-span-2 md:col-span-1 border-2 border-[#770006] p-5 rounded"
+        >
           <h1 className="font-semibold text-xl text-center">
             {actionType === "login" ? "Login In" : "Create Account"}
           </h1>
@@ -30,51 +37,76 @@ const index = () => {
               : "Please register below with your account details"}
           </p>
           {actionType === "signup" && (
-            <div className="flex flex-row items-center mb-4">
-              <input
-                className="p-2 border border-[#770006] w-full mr-2"
-                placeholder="First name"
-                value={userDetail.firstName}
-                onChange={(e) =>
-                  setUserDetail({ ...userDetail, firstName: e.target.value })
-                }
-              />
-              <input
+            <div className="form-group">
+              <InputArea
+                register={register}
+                name="name"
+                type="text"
+                placeholder="Name"
+                Icon={FiUser}
                 className="p-2 border border-[#770006] w-full"
-                placeholder="Last name"
-                value={userDetail.lastName}
-                onChange={(e) =>
-                  setUserDetail({ ...userDetail, lastName: e.target.value })
-                }
               />
+              <Error errorName={errors.name} />
             </div>
           )}
-          <input
-            className="p-2 border border-[#770006] w-full"
-            placeholder="Email"
-            value={userDetail.email}
-            onChange={(e) =>
-              setUserDetail({ ...userDetail, email: e.target.value })
-            }
-          />
-          <input
-            className="p-2 border border-[#770006] w-full mt-4"
-            placeholder="Password"
-            value={userDetail.password}
-            onChange={(e) =>
-              setUserDetail({ ...userDetail, password: e.target.value })
-            }
-            type="password"
-          />
+          <div className="form-group">
+            <InputArea
+              register={register}
+              name={
+                actionType === "login"
+                  ? "registerEmail"
+                  : actionType === "signup"
+                  ? "email"
+                  : "verifyEmail"
+              }
+              type="email"
+              placeholder={
+                actionType === "forgot" ? "Your Registered Email" : "Email"
+              }
+              Icon={FiMail}
+              className="p-2 border border-[#770006] w-full mt-2"
+            />
+            <Error errorName={errors.email} />
+          </div>
+          {actionType !== "forgot" && (
+            <div className="form-group">
+              <InputArea
+                register={register}
+                name="password"
+                type="password"
+                placeholder="Password"
+                Icon={FiLock}
+                className="p-2 border border-[#770006] w-full mt-2"
+              />
+              <Error errorName={errors.password} />
+            </div>
+          )}
           {actionType === "login" && (
-            <p className="text-sm font-medium mt-2">Forgot your password?</p>
+            <p
+              onClick={() => setActionType("forgot")}
+              className="text-sm font-medium mt-2 cursor-pointer"
+            >
+              Forgot your password?
+            </p>
           )}
           <div className="px-4 md:px-8 lg:px-12 w-full text-sm md:text-base">
-            <button className="bg-[#770006] text-sm md:text-base text-uppercase text-white p-3 rounded w-full my-4">
-              {actionType === "login" ? "SIGN IN" : "CREATE"}
+            <button
+              disabled={loading}
+              type="submit"
+              className="bg-[#770006] text-sm md:text-base text-uppercase text-white p-3 rounded w-full my-4"
+            >
+              {loading ? (
+                <BasicLoading />
+              ) : actionType === "login" ? (
+                "SIGN IN"
+              ) : actionType === "signup" ? (
+                "CREATE"
+              ) : (
+                "RECOVER PASSWORD"
+              )}
             </button>
           </div>
-          <div className="flex flex-row items-center w-full justify-between">
+          {/* <div className="flex flex-row items-center w-full justify-between">
             <hr className="border border-[#770006] w-[45%]"></hr>
             <p>Or</p>
             <hr className="border border-[#770006] w-[45%]"></hr>
@@ -88,8 +120,8 @@ const index = () => {
                   : "Create with Google"}
               </p>
             </button>
-          </div>
-        </div>
+          </div> */}
+        </form>
         <div className="col-span-2 md:col-span-1 flex flex-col justify-center">
           <h2 className="text-base md:text-lg mb-4">
             {actionType === "login"

@@ -9,7 +9,8 @@ import UserServices from "@/services/UserServices";
 import { UserContext } from "@/context/UserContext";
 import { notifyError, notifySuccess } from "@/utils/toast";
 
-const useLoginSubmit = (setModalOpen) => {
+// const useLoginSubmit = (setModalOpen) => {
+const useLoginSubmit = (actionType) => {
   const router = useRouter();
   const { redirect } = router.query;
   const { dispatch } = useContext(UserContext);
@@ -29,14 +30,14 @@ const useLoginSubmit = (setModalOpen) => {
     password,
   }) => {
     setLoading(true);
-    if (registerEmail && password) {
+    if (actionType === "login") {
       UserServices.userLogin({
         registerEmail,
         password,
       })
         .then((res) => {
           setLoading(false);
-          setModalOpen(false);
+          // setModalOpen(false);
           router.push(redirect || "/");
           notifySuccess("Login Success!");
           dispatch({ type: "USER_LOGIN", payload: res });
@@ -47,11 +48,12 @@ const useLoginSubmit = (setModalOpen) => {
           setLoading(false);
         });
     }
-    if (name && email && password) {
+    if (actionType === "signup") {
       UserServices.verifyEmailAddress({ name, email, password })
         .then((res) => {
           setLoading(false);
-          setModalOpen(false);
+          // setModalOpen(false);
+          console.log(res);
           notifySuccess(res.message);
         })
         .catch((err) => {
@@ -59,7 +61,7 @@ const useLoginSubmit = (setModalOpen) => {
           notifyError(err.response.data.message);
         });
     }
-    if (verifyEmail) {
+    if (actionType === "forgot") {
       UserServices.forgetPassword({ verifyEmail })
         .then((res) => {
           setLoading(false);
@@ -81,7 +83,7 @@ const useLoginSubmit = (setModalOpen) => {
         image: user.profileObj.imageUrl,
       })
         .then((res) => {
-          setModalOpen(false);
+          // setModalOpen(false);
           notifySuccess("Login success!");
           router.push(redirect || "/");
           dispatch({ type: "USER_LOGIN", payload: res });
@@ -90,7 +92,7 @@ const useLoginSubmit = (setModalOpen) => {
 
         .catch((err) => {
           notifyError(err.message);
-          setModalOpen(false);
+          // setModalOpen(false);
         });
     }
   };

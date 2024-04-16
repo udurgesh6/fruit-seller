@@ -19,30 +19,6 @@ const index = () => {
     }
   }, [data]);
 
-  const tableContent = [
-    {
-      id: "jwhjw",
-      orderTime: "31st July, 2023",
-      method: "online",
-      status: "Delivered",
-      total: 2,
-    },
-    {
-      id: "jwhjw2",
-      orderTime: "31st July, 2023",
-      method: "online",
-      status: "Delivered",
-      total: 2,
-    },
-    {
-      id: "jwhjw3",
-      orderTime: "31st July, 2023",
-      method: "online",
-      status: "Delivered",
-      total: 2,
-    },
-  ];
-
   const {
     state: { userInfo },
   } = useContext(UserContext);
@@ -107,9 +83,9 @@ const index = () => {
                 <OrderHistory order={order} />
                 <td className="px-5 py-3 whitespace-nowrap text-right text-sm">
                   <Link href={`/order/${order._id}`}>
-                    <a className="px-3 py-1 bg-emerald-100 text-xs text-emerald-600 hover:new-bg hover:text-white transition-all font-semibold rounded-full">
+                    <span className="px-3 py-1 bg-emerald-100 text-xs text-emerald-600 hover:new-bg hover:text-white transition-all font-semibold rounded-full">
                       Details
-                    </a>
+                    </span>
                   </Link>
                 </td>
               </tr>

@@ -4,20 +4,21 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCart } from "react-use-cart";
-// import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-
-//internal import
-import useAsync from "@hooks/useAsync";
-import { UserContext } from "@context/UserContext";
-import OrderServices from "@services/OrderServices";
-import CouponServices from "@services/CouponServices";
-import { notifyError, notifySuccess } from "@utils/toast";
+import useAsync from "./useAsync";
+import { UserContext } from "@/context/UserContext";
+import OrderServices from "@/services/OrderServices";
+import CouponServices from "@/services/CouponServices";
+import { notifyError, notifySuccess } from "@/utils/toast";
+import { CartContext } from "@/context/CartContext";
+import { nanoid } from "nanoid";
 
 const useCheckoutSubmit = () => {
   const {
     state: { userInfo, shippingAddress },
     dispatch,
   } = useContext(UserContext);
+
+  const { cartItems, clearCart, getCartTotal } = useContext(CartContext);
 
   const [error, setError] = useState("");
   const [total, setTotal] = useState("");
@@ -31,10 +32,9 @@ const useCheckoutSubmit = () => {
   const [isCheckoutSubmit, setIsCheckoutSubmit] = useState(false);
 
   const router = useRouter();
-  // const stripe = useStripe();
-  // const elements = useElements();
   const couponRef = useRef("");
-  const { isEmpty, emptyCart, items, cartTotal } = useCart();
+  const isEmpty = cartItems.length < 1;
+  const cartTotal = getCartTotal();
 
   const {
     register,
@@ -54,7 +54,6 @@ const useCheckoutSubmit = () => {
     }
   }, []);
 
-  //remove coupon if total value less then minimum amount of coupon
   useEffect(() => {
     if (minimumAmount - discountAmount > total || isEmpty) {
       setDiscountPercentage(0);
@@ -64,7 +63,7 @@ const useCheckoutSubmit = () => {
 
   //calculate total and discount value
   useEffect(() => {
-    const result = items?.filter((p) => p.type === discountProductType);
+    const result = cartItems?.filter((p) => p.type === discountProductType);
     const discountProductTotal = result?.reduce(
       (preValue, currentValue) => preValue + currentValue.itemTotal,
       0
@@ -82,7 +81,6 @@ const useCheckoutSubmit = () => {
     if (!userInfo) {
       router.push("/");
     }
-
     setValue("firstName", shippingAddress.firstName);
     setValue("lastName", shippingAddress.lastName);
     setValue("address", shippingAddress.address);
@@ -93,17 +91,65 @@ const useCheckoutSubmit = () => {
     setValue("zipCode", shippingAddress.zipCode);
   }, []);
 
-  const loadRazorpay = (url) => {
+  const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = url;
-      document.body.appendChild(script);
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => {
         resolve(true);
       };
       script.onerror = () => {
         resolve(false);
       };
+      document.body.appendChild(script);
+    });
+  };
+
+  const makePayment = async (orderResponse, orderInfo) => {
+    const res = await initializeRazorpay();
+    if (!res) {
+      alert("Razorpay SDK Failed to load");
+      return;
+    }
+
+    const data = await fetch("/api/razorpay", {
+      method: "POST",
+      body: JSON.stringify({ ...orderResponse }),
+    }).then((t) => t.json());
+
+    let options = {
+      key: process.env.RAZORPAY_KEY,
+      name: "Quintessentials",
+      currency: data.currency,
+      amount: data.amount,
+      order_id: data.id,
+      description: "Thankyou",
+      image: "https://www.quintessentials.in/logo/logo.png",
+      handler: function (response) {
+        handleSuccess(response, orderResponse, data);
+      },
+      prefill: {
+        name: "Quintessentials",
+        email: "quintessentialsmailer@gmail.com",
+        contact: "8591519966",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
     });
   };
 
@@ -111,6 +157,7 @@ const useCheckoutSubmit = () => {
     dispatch({ type: "SAVE_SHIPPING_ADDRESS", payload: data });
     Cookies.set("shippingAddress", JSON.stringify(data));
     setIsCheckoutSubmit(true);
+
     let orderInfo = {
       name: `${data.firstName} ${data.lastName}`,
       address: data.address,
@@ -122,53 +169,20 @@ const useCheckoutSubmit = () => {
       shippingOption: data.shippingOption,
       paymentMethod: data.paymentMethod,
       status: "Pending",
-      cart: items,
+      cart: cartItems,
       subTotal: cartTotal,
       shippingCost: shippingCost,
       discount: discountAmount,
       total: total,
+      currency: "INR",
     };
+
     if (data.paymentMethod === "Other") {
-      const orderData = {
-        currency: "INR",
-        amount: orderInfo.total,
-      };
-      OrderServices.createOrder(orderData).then(async (orderResponse) => {
-        console.log(orderResponse);
-        const result = await loadRazorpay(
-          "https://checkout.razorpay.com/v1/checkout.js"
-        );
-        if (!result) {
-          alert("Razorpay SDK failed to load");
-          return;
-        } else {
-          var options = {
-            key: `${process.env.REACT_APP_RZP_KEY}`, // Enter the Key ID generated from the Dashboard
-            amount: orderInfo.total, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            currency: "INR",
-            name: "QuintEssentials",
-            description: "Payment For QuintEssentials",
-            order_id: orderResponse.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            handler: function (response) {
-              handleSuccess(response, orderInfo, data);
-            },
-            prefill: {
-              name: orderInfo.name,
-              email: orderInfo.email,
-              contact: orderInfo.contact,
-            },
-            theme: {
-              color: "#3399cc",
-            },
-          };
-          var rzp1 = new Razorpay(options);
-          rzp1.on("payment.failed", function (response) {
-            alert(response.error.description);
-          });
-          rzp1.open();
-        }
+      OrderServices.addOrder(orderInfo).then(async (orderResponse) => {
+        makePayment(orderResponse, orderInfo);
       });
     }
+
     if (data.paymentMethod === "COD") {
       OrderServices.addOrder(orderInfo)
         .then((res) => {
@@ -176,7 +190,7 @@ const useCheckoutSubmit = () => {
           notifySuccess("Your Order Confirmed!");
           Cookies.remove("couponInfo");
           sessionStorage.removeItem("products");
-          emptyCart();
+          clearCart();
           setIsCheckoutSubmit(false);
         })
         .catch((err) => {
@@ -192,16 +206,17 @@ const useCheckoutSubmit = () => {
       cardInfo: data.paymentMethod,
       payment: response,
     };
-    OrderServices.addOrder(orderData)
+    OrderServices.updateOrder(orderData)
       .then((res) => {
         notifySuccess("Your Order Confirmed!");
         router.push(`/order/${res._id}`);
         Cookies.remove("couponInfo");
-        emptyCart();
+        clearCart();
         sessionStorage.removeItem("products");
         setIsCheckoutSubmit(false);
       })
       .catch((err) => {
+        console.log(err);
         notifyError(err.message);
         setIsCheckoutSubmit(false);
       });
@@ -266,7 +281,7 @@ const useCheckoutSubmit = () => {
     shippingCost,
     total,
     isEmpty,
-    items,
+    cartItems,
     cartTotal,
     isCheckoutSubmit,
   };

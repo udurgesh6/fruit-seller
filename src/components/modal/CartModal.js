@@ -3,66 +3,22 @@ import Image from "next/image";
 import MainModal from "./MainModal";
 import { Bag, Minus, Plus } from "@/constants/allSvgs";
 import { CartContext } from "@/context/CartContext";
+import { UserContext } from "@/context/UserContext";
+import Link from "next/link";
+import { notifyError } from "@/utils/toast";
 
 const CartModal = ({ modalOpen, setModalOpen }) => {
-  const { cartItems, addToCart, removeFromCart, getCartTotal } =
-    useContext(CartContext);
-
-  const makePayment = async () => {
-    console.log("here...");
-    const res = await initializeRazorpay();
-
-    if (!res) {
-      alert("Razorpay SDK Failed to load");
-      return;
-    }
-
-    // Make API call to the serverless API
-    const data = await fetch("/api/razorpay", { method: "POST" }).then((t) =>
-      t.json()
-    );
-
-    var options = {
-      key: process.env.RAZORPAY_KEY, // Enter the Key ID generated from the Dashboard
-      name: "Quintessentials",
-      currency: data.currency,
-      amount: data.amount,
-      order_id: data.id,
-      description: "Thankyou",
-      image: "https://www.quintessentials.in/logo/logo.png",
-      handler: function (response) {
-        // Validate payment at server - using webhooks is a better idea.
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature);
-      },
-      prefill: {
-        name: "Quintessentials",
-        email: "quintessentialsmailer@gmail.com",
-        contact: "8591519966",
-      },
-    };
-
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
-  };
-
-  const initializeRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      // document.body.appendChild(script);
-
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
-
-      document.body.appendChild(script);
-    });
-  };
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    getCartTotal,
+    setCartModalOpen,
+  } = useContext(CartContext);
+  const {
+    state: { userInfo },
+  } = useContext(UserContext);
+  console.log(userInfo);
 
   return (
     <MainModal modalOpen={modalOpen} setModalOpen={setModalOpen}>
@@ -118,15 +74,21 @@ const CartModal = ({ modalOpen, setModalOpen }) => {
           </div>
         ))}
         {cartItems.length > 0 && (
-          <button
+          <Link
             className="py-3 px-3 rounded text-white flex flex-row items-center justify-between bg-[#770006] w-full"
-            onClick={makePayment}
+            href={!userInfo ? "/authentication" : "/checkout"}
+            onClick={() => {
+              setCartModalOpen(false);
+              if (!userInfo) {
+                notifyError("Please login first !");
+              }
+            }}
           >
             <p>Proceed To Checkout</p>
             <span className="px-3 py-1 bg-white text-lime-900 text-lg font-semibold rounded-sm">
               ₹ {getCartTotal()}
             </span>
-          </button>
+          </Link>
         )}
       </div>
     </MainModal>

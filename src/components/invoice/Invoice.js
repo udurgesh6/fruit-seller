@@ -13,14 +13,9 @@ const Invoice = ({ data, printRef }) => {
           <div className="lg:text-right text-left">
             <h2 className="text-lg font-serif font-semibold mt-4 lg:mt-0 md:mt-0">
               <Link href="/">
-                <a className="">
-                  <Image
-                    width={128}
-                    height={71}
-                    src="/logo/logo.png"
-                    alt="logo"
-                  />
-                </a>
+                <span className="flex justify-end">
+                  <Image width={50} height={50} src="/logo.png" alt="logo" />
+                </span>
               </Link>
             </h2>
             <p className="text-sm text-gray-500">
@@ -112,6 +107,14 @@ const Invoice = ({ data, printRef }) => {
             </span>
             <span className="text-sm text-gray-500 font-semibold font-serif block">
               {data.paymentMethod}
+            </span>
+          </div>
+          <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
+            <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 block">
+              Status
+            </span>
+            <span className="text-sm text-gray-500 font-semibold font-serif block">
+              {data.status}
             </span>
           </div>
           <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">

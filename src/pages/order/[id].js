@@ -43,7 +43,7 @@ const Order = ({ params }) => {
       </div>
       <div className="bg-white rounded-lg shadow-sm">
         <Invoice data={data} printRef={printRef} />
-        <div className="bg-white p-8 rounded-b-xl">
+        {/* <div className="bg-white p-8 rounded-b-xl">
           <div className="flex lg:flex-row md:flex-row sm:flex-row flex-col justify-between">
             <PDFDownloadLink
               document={<InvoiceForDownload data={data} />}
@@ -76,7 +76,7 @@ const Order = ({ params }) => {
               documentTitle="Invoice"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
